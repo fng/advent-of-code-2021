@@ -1,6 +1,6 @@
 package com.github.fng.adventofcode2021.day02
 
-object Day02 {
+object Day02Part1 {
 
   object CourseParser {
 
@@ -63,7 +63,4 @@ object Day02 {
   case class Up(units: Int) extends VerticalMovement(units * -1) {
     require(units > 0, "units for movement must be positive")
   }
-
-  object Part1 {}
-
 }
