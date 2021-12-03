@@ -36,24 +36,45 @@ class Day03Test extends AnyFunSuite {
 
     assert(Day03.calculatePowerConsumption(diagnosticReport) === 4139586)
   }
-//
-//  test("Day01 - Part 2 - reference") {
-//    val numbers =
-//      ResourceUtils
-//        .getLinesFromResource("day01/reference-input.txt")
-//        .map(_.toInt)
-//    assert(
-//      Day01.Part2.numberOfTimesANumberIncreasesWithSlidingWindow(numbers) === 5
-//    )
-//  }
-//
-//  test("Day01 - Part 2 - exercise") {
-//    val numbers =
-//      ResourceUtils.getLinesFromResource("day01/input.txt").map(_.toInt)
-//    assert(
-//      Day01.Part2.numberOfTimesANumberIncreasesWithSlidingWindow(
-//        numbers
-//      ) === 1822
-//    )
-//  }
+
+  test("Day03 - Part 2 - reference") {
+    val diagnosticReport =
+      ResourceUtils.getLinesFromResource("day03/reference-input.txt")
+
+    val filteredByMostCommonBit =
+      Day03.filterByCommonBit(diagnosticReport, filterMostCommon = true)
+    val filteredByLeastCommonBit =
+      Day03.filterByCommonBit(diagnosticReport, filterMostCommon = false)
+
+    assert(filteredByMostCommonBit === List("10111"))
+    assert(filteredByLeastCommonBit === List("01010"))
+
+    assert(Day03.binaryToDecimal(filteredByMostCommonBit.head) === 23)
+    assert(Day03.binaryToDecimal(filteredByLeastCommonBit.head) === 10)
+
+    assert(Day03.determineOxygenGeneratorRating(diagnosticReport) === 23)
+    assert(Day03.determineC02ScrubberRating(diagnosticReport) === 10)
+    assert(Day03.determineLifesupportRating(diagnosticReport) === 230)
+  }
+
+  test("Day03 - Part 2 - exercise") {
+    val diagnosticReport =
+      ResourceUtils.getLinesFromResource("day03/input.txt")
+
+    val filteredByMostCommonBit =
+      Day03.filterByCommonBit(diagnosticReport, filterMostCommon = true)
+    val filteredByLeastCommonBit =
+      Day03.filterByCommonBit(diagnosticReport, filterMostCommon = false)
+
+    assert(filteredByMostCommonBit === List("100111101011"))
+    assert(filteredByLeastCommonBit === List("001011000101"))
+
+    assert(Day03.binaryToDecimal(filteredByMostCommonBit.head) === 2539)
+    assert(Day03.binaryToDecimal(filteredByLeastCommonBit.head) === 709)
+
+    assert(Day03.determineOxygenGeneratorRating(diagnosticReport) === 2539)
+    assert(Day03.determineC02ScrubberRating(diagnosticReport) === 709)
+    assert(Day03.determineLifesupportRating(diagnosticReport) === 1800151)
+  }
+
 }

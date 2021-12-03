@@ -47,4 +47,52 @@ object Day03 {
     gammaRate * epsilonRate
   }
 
+  def filterByCommonBit(
+      binaryNumbers: List[String],
+      filterMostCommon: Boolean
+  ): List[String] = {
+    0.until(binaryNumbers.head.length).foldLeft(binaryNumbers) {
+      case (remainingBinaryNumbers, filterBitIndex) =>
+        //to not filter further if there is only one number left
+        if (remainingBinaryNumbers.length == 1) {
+          remainingBinaryNumbers
+        } else {
+          val bitsAtIndex = remainingBinaryNumbers
+            .map(_.substring(filterBitIndex, filterBitIndex + 1))
+          val numberOf0Bits = bitsAtIndex.count(_ == "0")
+          val numberOf1Bits = bitsAtIndex.count(_ == "1")
+
+          val commonBit = if (filterMostCommon) {
+            if (numberOf0Bits > numberOf1Bits) "0"
+            else if (numberOf0Bits == numberOf1Bits) "1"
+            else "1"
+          } else {
+            if (numberOf0Bits < numberOf1Bits) "0"
+            else if (numberOf0Bits == numberOf1Bits) "0"
+            else "1"
+          }
+
+          remainingBinaryNumbers.filter(
+            _.substring(filterBitIndex, filterBitIndex + 1) == commonBit
+          )
+        }
+
+    }
+  }
+
+  def determineOxygenGeneratorRating(binaryNumbers: List[String]): Int =
+    binaryToDecimal(
+      filterByCommonBit(binaryNumbers, filterMostCommon = true).head
+    )
+
+  def determineC02ScrubberRating(binaryNumbers: List[String]): Int =
+    binaryToDecimal(
+      filterByCommonBit(binaryNumbers, filterMostCommon = false).head
+    )
+
+  def determineLifesupportRating(diagnosticReport: List[String]): Int =
+    determineOxygenGeneratorRating(
+      diagnosticReport
+    ) * determineC02ScrubberRating(diagnosticReport)
+
 }
