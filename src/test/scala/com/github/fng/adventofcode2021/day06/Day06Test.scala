@@ -26,23 +26,50 @@ class Day06Test extends AnyFunSuite {
       }
 
     assert(populationAfter18Days.length === 26)
-
-    val populationAfter80days = 1.to(80).foldLeft(initialPopulation) {
-      case (population, _) => Day06.calculationPopulationForNextDay(population)
+    val initialMap = Day06.populationToMap(initialPopulation)
+    val populationAfter80days = 1.to(80).foldLeft(initialMap) { case (map, _) =>
+      Day06.calculatePopulationWithMap(map)
     }
 
-    assert(populationAfter80days.length === 5934)
+    assert(populationAfter80days.values.sum === 5934L)
   }
 
   test("Day06 - Part1 - exercise") {
 
     val input = ResourceUtils.getLinesFromResource("day06/input.txt")
     val initialPopulation = Day06.parseInput(input)
-    val populationAfter80days = 1.to(80).foldLeft(initialPopulation) {
-      case (population, _) => Day06.calculationPopulationForNextDay(population)
+    val initialMap = Day06.populationToMap(initialPopulation)
+    val populationAfter80days = 1.to(80).foldLeft(initialMap) { case (map, _) =>
+      Day06.calculatePopulationWithMap(map)
     }
 
-    assert(populationAfter80days.length === 379414)
+    assert(populationAfter80days.values.sum === 379414L)
+  }
+
+  test("Day06 - Part2 - reference") {
+
+    val input = ResourceUtils.getLinesFromResource("day06/reference-input.txt")
+
+    val initialPopulation = Day06.parseInput(input)
+    val initialMap = Day06.populationToMap(initialPopulation)
+    val populationAfter80days = 1.to(256).foldLeft(initialMap) {
+      case (map, _) => Day06.calculatePopulationWithMap(map)
+    }
+
+    assert(populationAfter80days.values.sum === 26984457539L)
+  }
+
+  test("Day06 - Part2 - exercise") {
+
+    val input = ResourceUtils.getLinesFromResource("day06/input.txt")
+
+    val initialPopulation = Day06.parseInput(input)
+    val initialMap = Day06.populationToMap(initialPopulation)
+    val populationAfter80days = 1.to(256).foldLeft(initialMap) {
+      case (map, _) => Day06.calculatePopulationWithMap(map)
+    }
+
+    assert(populationAfter80days.values.sum === 1705008653296L)
   }
 
 }
