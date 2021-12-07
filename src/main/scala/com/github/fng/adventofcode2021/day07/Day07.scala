@@ -25,4 +25,31 @@ object Day07 {
     }
   }
 
+  object Part2 {
+
+    def fuelCostToMoveAllTo(currentPositions: List[Int], to: Int): Int = {
+      val stepsMap: Map[Int, Int] = currentPositions
+        .map(currentPosition => (currentPosition - to).abs)
+        .groupBy(i => i)
+        .view
+        .mapValues(_.length)
+        .toMap
+
+      stepsMap.toList.map { case (steps, count) =>
+        1.to(steps).toList.sum * count
+      }.sum
+    }
+
+    def alignToPositionWithLeastFuel(startPositions: List[Int]): (Int, Int) = {
+      val min = startPositions.min
+      val max = startPositions.max
+
+      min
+        .to(max)
+        .map { targetPosition =>
+          targetPosition -> fuelCostToMoveAllTo(startPositions, targetPosition)
+        }
+        .minBy(_._2)
+    }
+  }
 }
