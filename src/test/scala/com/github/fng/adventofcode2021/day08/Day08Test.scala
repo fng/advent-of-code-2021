@@ -53,4 +53,61 @@ class Day08Test extends AnyFunSuite {
     assert(fourDigitOutputValues.map(_.countUniqueOutputValues()).sum === 456)
   }
 
+  test("Day08 - Part2 - example") {
+
+    val input = List(
+      "acedgfb cdfbe gcdfa fbcad dab cefabd cdfgeb eafb cagedb ab | cdfeb fcadb cdfeb cdbaf"
+    )
+    val parsedInput
+        : List[(Day08.UniqueSignalPatterns, Day08.FourDigitOutputValues)] =
+      Day08.parseInput(input)
+
+    val signalPatterns = parsedInput.map(_._1)
+
+    val firstPatternDecoded = signalPatterns.head.decode()
+    assert(
+      firstPatternDecoded.mkString("\n") === """(cagedb,0)
+                                                             |(cdfbe,5)
+                                                             |(ab,1)
+                                                             |(cdfgeb,6)
+                                                             |(cefabd,9)
+                                                             |(gcdfa,2)
+                                                             |(dab,7)
+                                                             |(fbcad,3)
+                                                             |(acedgfb,8)
+                                                             |(eafb,4)""".stripMargin
+    )
+
+    assert(parsedInput.map(_._2).head.decode(firstPatternDecoded) === 5353)
+
+  }
+
+  test("Day08 - Part2 - reference") {
+
+    val input = ResourceUtils.getLinesFromResource("day08/reference-input.txt")
+    val parsedInput
+        : List[(Day08.UniqueSignalPatterns, Day08.FourDigitOutputValues)] =
+      Day08.parseInput(input)
+
+    val sum = parsedInput.map { case (pattern, outputValues) =>
+      outputValues.decode(pattern.decode())
+    }.sum
+
+    assert(sum === 61229)
+  }
+
+  test("Day08 - Part2 - exercise") {
+
+    val input = ResourceUtils.getLinesFromResource("day08/input.txt")
+    val parsedInput
+        : List[(Day08.UniqueSignalPatterns, Day08.FourDigitOutputValues)] =
+      Day08.parseInput(input)
+
+    val sum = parsedInput.map { case (pattern, outputValues) =>
+      outputValues.decode(pattern.decode())
+    }.sum
+
+    assert(sum === 1091609)
+  }
+
 }
