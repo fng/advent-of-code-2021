@@ -46,4 +46,44 @@ class Day09Test extends AnyFunSuite {
     assert(Day09.calculateRiskLevel(map) === 423)
   }
 
+  test("Day09 - Part2 - reference") {
+
+    val input = ResourceUtils.getLinesFromResource("day09/reference-input.txt")
+    val map = Day09.parseInputToMap(input)
+    val lowPoints = Day09.lowestPoints(map)
+
+    val firstLowPoint = lowPoints.head._1
+    val firstLowPointBasin = Day09.basinForLowPoint(map, firstLowPoint)
+
+    val firstLowPointBasinAsString = 0
+      .to(4)
+      .map { y =>
+        0.to(9)
+          .map { x =>
+            firstLowPointBasin.getOrElse((x, y), "-")
+          }
+          .mkString
+      }
+      .mkString("\n")
+
+    assert(firstLowPointBasinAsString === """----------
+                                            |--878-----
+                                            |-85678----
+                                            |87678-----
+                                            |-8--------""".stripMargin)
+
+    assert(
+      Day09.calculateLargestBasinsProduct(map, lowPoints.map(_._1)) === 1134
+    )
+  }
+
+  test("Day09 - Part2 - exercise") {
+    val input = ResourceUtils.getLinesFromResource("day09/input.txt")
+    val map = Day09.parseInputToMap(input)
+    val lowPoints = Day09.lowestPoints(map)
+    assert(
+      Day09.calculateLargestBasinsProduct(map, lowPoints.map(_._1)) === 1198704
+    )
+  }
+
 }
