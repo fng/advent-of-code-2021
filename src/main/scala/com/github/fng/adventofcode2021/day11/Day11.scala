@@ -49,6 +49,12 @@ object Day11 {
       }.toList.filterNot(_ == point)
     }
 
+    val allFlashedAtOnce: Boolean = map.values.forall(_ == 0)
+
+    def flashAllAfterStep(step: Int): Int = {
+      if(runSteps(step).allFlashedAtOnce) step else flashAllAfterStep(step + 1)
+    }
+
     override def toString: String = {
       val maxX = map.keys.toList.map(_._1).max
       val maxY = map.keys.toList.map(_._1).max

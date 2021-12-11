@@ -80,6 +80,19 @@ class Day11Test extends AnyFunSuite {
       assert(after100Steps.flashes === 1546)
     }
 
+  test("Day11 - Part2 - reference") {
+    val input = ResourceUtils.getLinesFromResource("day11/reference-input.txt")
+    val initialGrid = Day11.parseGrid(input)
+    assert(initialGrid.flashAllAfterStep(1) === 195)
+  }
+
+  test("Day11 - Part2 - exercies") {
+    val input = ResourceUtils.getLinesFromResource("day11/input.txt")
+    val initialGrid = Day11.parseGrid(input)
+    assert(initialGrid.flashAllAfterStep(1) === 471)
+  }
+
+
   private def assertString(actual: String, expected: String): Unit = {
     assert(actual.replace("\r\n", "\n") ===
       expected.replace("\r\n", "\n").stripMargin)
