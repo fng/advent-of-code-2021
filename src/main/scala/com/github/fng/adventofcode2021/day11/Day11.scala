@@ -2,57 +2,70 @@ package com.github.fng.adventofcode2021.day11
 
 object Day11 {
 
-  case class Grid(map: Map[(Int, Int), Int], flashes: Int){
+  case class Grid(map: Map[(Int, Int), Int], flashes: Int) {
     def runSteps(numberOfSteps: Int): Grid = {
-      1.to(numberOfSteps).foldLeft(this){
-        case (gridBeforeStep, step) =>
-          val mapAfterStepIncrease = gridBeforeStep.map.map{
-            case (key, value) => key -> (value + 1)
-          }
-          processFlash(gridBeforeStep.copy(map = mapAfterStepIncrease))
+      1.to(numberOfSteps).foldLeft(this) { case (gridBeforeStep, step) =>
+        val mapAfterStepIncrease = gridBeforeStep.map.map { case (key, value) =>
+          key -> (value + 1)
+        }
+        processFlash(gridBeforeStep.copy(map = mapAfterStepIncrease))
       }
     }
 
-    private def processFlash(grid: Grid): Grid ={
-      val readyToFlash = grid.map.toList.collect{
+    private def processFlash(grid: Grid): Grid = {
+      val readyToFlash = grid.map.toList.collect {
         case (coordinate, energyLevel) if energyLevel > 9 => coordinate
       }
 
-      if(readyToFlash.nonEmpty) {
+      if (readyToFlash.nonEmpty) {
         processFlash(readyToFlash.foldLeft(grid)(flashSingleOctopus))
-      } else{
+      } else {
         grid
       }
 
     }
 
-    private def flashSingleOctopus(grid: Grid, coordinates: (Int, Int)): Grid = {
+    private def flashSingleOctopus(
+        grid: Grid,
+        coordinates: (Int, Int)
+    ): Grid = {
       //set the flashing octopus to energy level 0
-      val gridAfterSingleFlash = grid.copy(map = grid.map.updated(coordinates, 0), flashes = grid.flashes + 1)
-      adjacentPoints(coordinates).foldLeft(gridAfterSingleFlash){
+      val gridAfterSingleFlash = grid.copy(
+        map = grid.map.updated(coordinates, 0),
+        flashes = grid.flashes + 1
+      )
+      adjacentPoints(coordinates).foldLeft(gridAfterSingleFlash) {
         case (gridBeforeNeighbourIncrease, point) =>
-          gridBeforeNeighbourIncrease.copy(map =           gridBeforeNeighbourIncrease.map.updatedWith(point){
-            case Some(0) => Some(0) //0 means an already flashed Octopus which should not be increased further
-            case Some(before) => Some(before + 1)
-            case None => None
-          }
+          gridBeforeNeighbourIncrease.copy(map =
+            gridBeforeNeighbourIncrease.map.updatedWith(point) {
+              case Some(0) =>
+                Some(
+                  0
+                ) //0 means an already flashed Octopus which should not be increased further
+              case Some(before) => Some(before + 1)
+              case None         => None
+            }
           )
       }
 
     }
 
     private def adjacentPoints(point: (Int, Int)): List[(Int, Int)] = {
-      (-1).to(1).flatMap{xDelta =>
-        (-1).to(1).map{yDelta =>
-          (point._1 + xDelta, point._2 + yDelta)
+      (-1)
+        .to(1)
+        .flatMap { xDelta =>
+          (-1).to(1).map { yDelta =>
+            (point._1 + xDelta, point._2 + yDelta)
+          }
         }
-      }.toList.filterNot(_ == point)
+        .toList
+        .filterNot(_ == point)
     }
 
     val allFlashedAtOnce: Boolean = map.values.forall(_ == 0)
 
     def flashAllAfterStep(step: Int): Int = {
-      if(runSteps(step).allFlashedAtOnce) step else flashAllAfterStep(step + 1)
+      if (runSteps(step).allFlashedAtOnce) step else flashAllAfterStep(step + 1)
     }
 
     override def toString: String = {

@@ -1,7 +1,7 @@
 package com.github.fng.adventofcode2021.day10
 
 import com.github.fng.adventofcode2021.ResourceUtils
-import com.github.fng.adventofcode2021.day10.Day10.Corrupted
+import com.github.fng.adventofcode2021.day10.Day10.{Corrupted, Incomplete}
 import org.scalatest.funsuite.AnyFunSuite
 
 class Day10Test extends AnyFunSuite {
@@ -11,18 +11,17 @@ class Day10Test extends AnyFunSuite {
 
     val validatedLines =
       input.map(line => line -> Day10.validateLineOfChunks(line))
-
     assert(
-      validatedLines.mkString("\n") === """([({(<(())[]>[[{[]{<()<>>,Incomplete)
-                                               |([(()[<>])]({[<{<<[]>>(,Incomplete)
-                                               |({([(<{}[<>[]}>{[]{[(<()>,Corrupted(}))
-                                               |((((({<>}<{<{<>}{[]{[]{},Incomplete)
-                                               |([[<[([]))<([[{}[[()]]],Corrupted()))
-                                               |([{[{({}]{}}([{[{{{}}([],Corrupted(]))
-                                               |({<[[]]>}<{[{[{[]{()[[[],Incomplete)
-                                               |([<(<(<(<{}))><([]([](),Corrupted()))
-                                               |(<{([([[(<>()){}]>(<<{{,Corrupted(>))
-                                               |(<{([{{}}[<[[[<>{}]]]>[]],Incomplete)""".stripMargin
+      validatedLines.mkString("\n") === """([({(<(())[]>[[{[]{<()<>>,Incomplete(List({, {, [, [, (, {, (, [)))
+                                          |([(()[<>])]({[<{<<[]>>(,Incomplete(List((, {, <, [, {, ()))
+                                          |({([(<{}[<>[]}>{[]{[(<()>,Corrupted(}))
+                                          |((((({<>}<{<{<>}{[]{[]{},Incomplete(List({, {, <, {, <, (, (, (, ()))
+                                          |([[<[([]))<([[{}[[()]]],Corrupted()))
+                                          |([{[{({}]{}}([{[{{{}}([],Corrupted(]))
+                                          |({<[[]]>}<{[{[{[]{()[[[],Incomplete(List([, [, {, {, [, {, [, {, <)))
+                                          |([<(<(<(<{}))><([]([](),Corrupted()))
+                                          |(<{([([[(<>()){}]>(<<{{,Corrupted(>))
+                                          |(<{([{{}}[<[[[<>{}]]]>[]],Incomplete(List([, (, {, <)))""".stripMargin
     )
 
     val errorScore = validatedLines
@@ -46,15 +45,31 @@ class Day10Test extends AnyFunSuite {
   }
 
   test("Day10 - Part2 - reference") {
-
     val input = ResourceUtils.getLinesFromResource("day10/reference-input.txt")
+    val incompleteLines =
+      input.map(Day10.validateLineOfChunks).collect { case i @ Incomplete(_) =>
+        (i.stack, i.completedBy, i.autocompleteScore)
+      }
 
+    assert(
+      incompleteLines.mkString("\n") === """(List({, {, [, [, (, {, (, [),List(}, }, ], ], ), }, ), ]),288957)
+                                                |(List((, {, <, [, {, (),List(), }, >, ], }, )),5566)
+                                                |(List({, {, <, {, <, (, (, (, (),List(}, }, >, }, >, ), ), ), )),1480781)
+                                                |(List([, [, {, {, [, {, [, {, <),List(], ], }, }, ], }, ], }, >),995444)
+                                                |(List([, (, {, <),List(], ), }, >),294)""".stripMargin
+    )
+
+    assert(Day10.middleScore(incompleteLines.map(_._3)) === 288957)
   }
 
   test("Day10 - Part2 - exercise") {
-
     val input = ResourceUtils.getLinesFromResource("day10/input.txt")
+    val scores =
+      input.map(Day10.validateLineOfChunks).collect { case i @ Incomplete(_) =>
+        i.autocompleteScore
+      }
 
+    assert(Day10.middleScore(scores) === 3042730309L)
   }
 
 }

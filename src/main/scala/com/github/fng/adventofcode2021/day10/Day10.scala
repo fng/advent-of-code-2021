@@ -6,8 +6,35 @@ import scala.util.{Failure, Success, Try}
 object Day10 {
 
   sealed trait SyntaxResult
+
   case object Valid extends SyntaxResult
-  case object Incomplete extends SyntaxResult
+
+  case class Incomplete(stack: List[String]) extends SyntaxResult {
+    val completedBy: List[String] = {
+      stack.foldLeft(List[String]()) { case (completingList, charOnStack) =>
+        charOnStack match {
+          case "(" => completingList :+ ")"
+          case "[" => completingList :+ "]"
+          case "{" => completingList :+ "}"
+          case "<" => completingList :+ ">"
+        }
+      }
+    }
+
+    val autocompleteScore: Long = {
+      completedBy.foldLeft(0L) { case (totalScore, char) =>
+        val charScore = char match {
+          case ")" => 1
+          case "]" => 2
+          case "}" => 3
+          case ">" => 4
+        }
+        totalScore * 5 + charScore
+      }
+    }
+
+  }
+
   case class Corrupted(unexpectedChar: String) extends SyntaxResult {
     val errorScore: Long = unexpectedChar match {
       case ")" => 3
@@ -66,9 +93,15 @@ object Day10 {
       }
     } match {
       case Failure(CorruptedSyntaxException(corrupted)) => corrupted
-      case Success(stack)                               => if (stack.isEmpty) Valid else Incomplete
+      case Success(stack)                               => if (stack.isEmpty) Valid else Incomplete(stack)
     }
 
+  }
+
+  def middleScore(scores: List[Long]): Long = {
+    val indexToTake = math.ceil(scores.length.toDouble / 2d).toInt - 1
+    val sorted = scores.sorted
+    sorted(indexToTake)
   }
 
 }
