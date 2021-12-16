@@ -180,4 +180,43 @@ class Day16Test extends AnyFunSuite {
     assert(parsed._1.versionSum === 847)
   }
 
+  test("Day16 - Part2 - example 1") {
+    assert(Day16.parseHex("C200B40A82")._1.eval === 3)
+  }
+
+  test("Day16 - Part2 - example 2") {
+    assert(Day16.parseHex("04005AC33890")._1.eval === 54)
+  }
+
+  test("Day16 - Part2 - example 3") {
+    assert(Day16.parseHex("880086C3E88112")._1.eval === 7)
+  }
+
+  test("Day16 - Part2 - example 4") {
+    assert(Day16.parseHex("CE00C43D881120")._1.eval === 9)
+  }
+
+  test("Day16 - Part2 - example 5") {
+    assert(Day16.parseHex("D8005AC2A8F0")._1.eval === 1)
+  }
+
+  test("Day16 - Part2 - example 6") {
+    assert(Day16.parseHex("F600BC2D8F")._1.eval === 0)
+  }
+
+  test("Day16 - Part2 - example 7") {
+    assert(Day16.parseHex("9C005AC2F8F0")._1.eval === 0)
+  }
+
+  test("Day16 - Part2 - example 8") {
+    assert(Day16.parseHex("9C0141080250320F1802104A08")._1.eval === 1)
+  }
+
+  test("Day16 - Part2 - exercise") {
+    val input = ResourceUtils.getLinesFromResource("day16/input.txt").head
+    val parsed = Day16.parseHex(input)
+    println(parsed)
+    assert(parsed._1.eval === 333794664059L)
+  }
+
 }

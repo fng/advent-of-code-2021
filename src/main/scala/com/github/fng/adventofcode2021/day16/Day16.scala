@@ -5,6 +5,8 @@ object Day16 {
   sealed trait Package {
     val version: Long
     def versionSum: Long = version
+
+    def eval: Long
   }
 
   case class LiteralPackage(
@@ -12,7 +14,9 @@ object Day16 {
       packageType: Long,
       literalBinary: String,
       literalDecimal: Long
-  ) extends Package
+  ) extends Package {
+    override def eval: Long = literalDecimal
+  }
 
   case class Operator(
       version: Long,
@@ -22,6 +26,39 @@ object Day16 {
   ) extends Package {
     override def versionSum: Long =
       this.version + packages.map(_.versionSum).sum
+
+    override def eval: Long = {
+
+      packageType match {
+        //sum
+        case 0 => packages.map(_.eval).sum
+
+        //product
+        case 1 => packages.map(_.eval).product
+
+        //min
+        case 2 => packages.map(_.eval).min
+
+        //max
+        case 3 => packages.map(_.eval).max
+
+        //greater than
+        case 5 =>
+          val List(first, second) = packages
+          if (first.eval > second.eval) 1 else 0
+
+        //less than
+        case 6 =>
+          val List(first, second) = packages
+          if (first.eval < second.eval) 1 else 0
+
+        //equal to
+        case 7 =>
+          val List(first, second) = packages
+          if (first.eval == second.eval) 1 else 0
+      }
+
+    }
   }
 
   def parseHex(hex: String): (Package, String) = parse(hexStringToBinary(hex))
