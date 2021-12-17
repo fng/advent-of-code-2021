@@ -1,5 +1,13 @@
 package com.github.fng.adventofcode2021.day17
 
+import java.util.concurrent.{
+  Callable,
+  Executor,
+  ExecutorService,
+  Executors,
+  TimeUnit
+}
+
 object Day17 {
 
   case class Point(x: Int, y: Int)
@@ -38,7 +46,10 @@ object Day17 {
       )
 
       val newVelocity = velocity.copy(
-        x = math.max(0, if (velocity.x > 0) velocity.x - 1 else velocity.x + 1),
+        x =
+          if (velocity.x == 0) 0
+          else if (velocity.x > 0) velocity.x - 1
+          else velocity.x + 1,
         y = velocity.y - 1
       )
       Probe(newPosition, newVelocity, path :+ newPosition)
@@ -58,6 +69,18 @@ object Day17 {
       )
 
     def trajectoryWithHighestY(targetArea: TargetArea): TargetComputer = {
+      val result =
+        allHittingTrajectories(targetArea).maxBy(_.probe.path.map(_.y).max)
+      println(result)
+      result
+    }
+
+    def allHittingTrajectories(targetArea: TargetArea): List[TargetComputer] =
+      allHittingTrajectoriesParallel(targetArea)
+
+    def allHittingTrajectoriesSerial(
+        targetArea: TargetArea
+    ): List[TargetComputer] = {
       val velocities = 0
         .to(100)
         .flatMap { x =>
@@ -70,7 +93,38 @@ object Day17 {
       velocities
         .map(initialize(targetArea: TargetArea, _).calculateTrajectory())
         .filter(_.isProbeInTargetArea)
-        .maxBy(_.probe.path.map(_.y).max)
+    }
+
+    def allHittingTrajectoriesParallel(
+        targetArea: TargetArea
+    ): List[TargetComputer] = {
+      val executorService = Executors.newFixedThreadPool(16)
+
+      val velocities = 0
+        .to(500)
+        .flatMap { x =>
+          (-500).to(500).map { y =>
+            Velocity(x, y)
+          }
+        }
+        .toList
+
+      val callables = velocities.map { v =>
+        new Callable[TargetComputer] {
+          override def call(): TargetComputer =
+            initialize(targetArea, v).calculateTrajectory()
+        }
+      }
+
+      import scala.jdk.CollectionConverters._
+
+      val futures = executorService.invokeAll(callables.asJava).asScala.toList
+      executorService.shutdown()
+      executorService.awaitTermination(5, TimeUnit.MINUTES)
+
+      futures
+        .map(_.get())
+        .filter(_.isProbeInTargetArea)
     }
 
   }
